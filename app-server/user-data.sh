@@ -16,7 +16,7 @@ pip3 install flask gunicorn
 curl -O https://raw.githubusercontent.com/GarrettOHara/web-server/main/app.py
 
 # Setup Web Server to run as daemon process
-echo >/etc/systemd/system/web-server.service <<'EOF'
+echo '
 [Unit]
 Description=Gunicorn instance for a simple web server
 After=network.target
@@ -31,7 +31,7 @@ Restart=always
 
 [Install]
 WantedBy=multi-user.target
-EOF
+' >/etc/systemd/system/web-server.service
 
 # Reload daemon processes
 systemctl daemon-reload
