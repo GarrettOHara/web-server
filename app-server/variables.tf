@@ -1,9 +1,3 @@
-variable "ami" {
-  type        = string
-  description = "The AMI"
-  default     = "ami-0d593311db5abb72b"
-}
-
 variable "cidr_blocks" {
   type        = list(string)
   description = "The CIDR range of the ingress web traffic"
@@ -19,7 +13,13 @@ variable "ingress_port" {
 variable "instance_type" {
   type        = string
   description = "The EC2 instance type"
-  default     = "t2.micro"
+  default     = "t3.micro"
+}
+
+variable "name" {
+  type        = string
+  description = "The name of the project"
+  default     = "web-server"
 }
 
 variable "protocol" {
@@ -31,13 +31,7 @@ variable "protocol" {
 variable "region" {
   type        = string
   description = "The AWS Region"
-  default     = "us-west-2"
-}
-
-variable "security_group_description" {
-  type        = string
-  description = "The description of the security group rule"
-  default     = "Allow inbound web traffic"
+  default     = "us-west-1"
 }
 
 variable "tags" {

@@ -1,0 +1,19 @@
+# MAC OS ignore
+.DS_Store
+
+# Terraform ignore
+**/.terraform/*
+**/*.tfstate*
+**/.terraform.lock.hcl
+*.tfplan
+*.external_modules/
+
+# Python ignore
+__pycache__/
+
+# VS Code ignore
+.vscode/*
+
+# Infracost
+manifest.json
+.infracost

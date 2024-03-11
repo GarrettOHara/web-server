@@ -1,32 +1,43 @@
 #!/bin/bash
 
+# Ensure root user
+sudo su
+
 # Update system
-sudo apt update
+yum update -y
+
+# Install Python 3 and pip
+yum install -y python3 python3-pip
 
 # Install dependencies
-pip install flask gunicorn
+pip3 install flask gunicorn
 
-# Create project root directory
-mkdir web-server
-cd web-server
-
-# Fetch web-server application code
-# curl www.github.com/garrettohara/web-server/
+# Fetch application code
+curl -O https://raw.githubusercontent.com/GarrettOHara/web-server/main/app.py
 
 # Setup Web Server to run as daemon process
-echo <<'EOF' >/etc/systemd/system/web-server.service
+echo >/etc/systemd/system/web-server.service <<'EOF'
 [Unit]
 Description=Gunicorn instance for a simple web server
 After=network.target
+
 [Service]
-User=ubuntu
-Group=www-data
-WorkingDirectory=/home/ubuntu/web-server
-ExecStart=gunicorn -b localhost:8000 app:app
+User=root
+Group=root
+WorkingDirectory=/home/ec2-user
+ExecStart=/usr/local/bin/gunicorn -b 0.0.0.0:80 app:app
+
 Restart=always
+
 [Install]
 WantedBy=multi-user.target
 EOF
-sudo systemctl daemon-reload
-sudo systemctl start web-server
-sudo systemctl enable web-server
+
+# Reload daemon processes
+systemctl daemon-reload
+
+# Start web server
+systemctl start web-server
+
+# Enable daemon in systemd to run on startup
+systemctl enable web-server
