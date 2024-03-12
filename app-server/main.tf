@@ -28,7 +28,10 @@ resource "aws_instance" "this" {
   }
 
   # Object file is required during user-data initiation
-  depends_on = [aws_s3_bucket.this]
+  depends_on = [
+    aws_s3_bucket.this,
+    aws_ssm_parameter.this
+  ]
 }
 
 resource "aws_iam_role" "this" {

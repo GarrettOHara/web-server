@@ -1,10 +1,13 @@
-# web-server
-Simple Flask API deployed with Terraform
+# Web Server
+Simple Flask API hosted on AWS deployed with Terraform
+
+Terraform includes: 
+- Automated code deployment of Flask API and respective HTML templates
+- CloudWatch log exports of server's log file 
 
 ### Check web-server initialization logs: 
 
 To check the output of running `user-data.sh` on deployment, connect via SSM to the EC2 instance from the console and view the logs file with: 
-
 ```bash
 sudo cat /var/log/cloud-init-output.log 
 ```
@@ -19,7 +22,6 @@ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizard
 ```
 
 ### Checking the CloudWatch Agent Configuration File 
-
 ```bash
 sudo cat /opt/aws/amazon-cloudwatch-agent/bin/config.json
 ```
