@@ -11,7 +11,7 @@
                         "file_path": "/home/ec2-user/requests.log",
                         "log_group_class": "INFREQUENT_ACCESS",
                         "log_group_name": "web-server/requests.log",
-                        "log_stream_name": "{%Y-%m-%d}-{hostname}-{instance_id}",
+                        "log_stream_name": "%Y-%m-%d-{hostname}-{instance_id}",
                         "retention_in_days": 1096
                     }
                 ]

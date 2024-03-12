@@ -52,10 +52,7 @@ systemctl enable web-server
 systemctl status web-server
 
 # Fetch cloudwatch log configuration
-/usr/local/bin/aws ssm get-parameter \ 
---name "AmazonCloudWatch-web-server-log-config" \ 
---region us-west-1 | jq -r '.Parameter.Value | fromjson' \
-	>/opt/aws/amazon-cloudwatch-agent/bin/config.json
+/usr/local/bin/aws ssm get-parameter --name "${ssm_parameter}" --region us-west-1 | jq -r '.Parameter.Value | fromjson' >/opt/aws/amazon-cloudwatch-agent/bin/config.json
 
 # Start cloudwatct worked that workedh logs agent
 /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json -s

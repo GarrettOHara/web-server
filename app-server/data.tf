@@ -23,6 +23,7 @@ data "template_file" "user_data_template" {
   template = file("${path.module}/user-data.sh")
 
   vars = {
-    s3_bucket = aws_s3_bucket.this.id
+    s3_bucket     = aws_s3_bucket.this.id
+    ssm_parameter = aws_ssm_parameter.this.name
   }
 }
