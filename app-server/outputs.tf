@@ -10,9 +10,8 @@ output "public_ipv4_addr" {
   sensitive   = false
 }
 
-output "sg_name" {
-  value       = aws_security_group.allow_web_traffic.name
-  description = "The web security group id"
+output "public_dns" {
+  value       = aws_instance.this.public_dns
+  description = "The IPv4 DNS domain"
   sensitive   = false
 }
-
