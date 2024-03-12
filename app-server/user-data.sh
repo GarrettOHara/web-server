@@ -18,8 +18,8 @@ unzip awscliv2.zip
 sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
 
 # Fetch application code
-sudo /usr/local/bin/aws s3 cp s3://${s3_bucket} /home/ec2-user/ --recursive
-sudo chmod +x /home/ec2-user/app.py
+/usr/local/bin/aws s3 cp s3://${s3_bucket} /home/ec2-user/ --recursive
+chmod +x /home/ec2-user/app.py
 
 # Setup Web Server to run as daemon process
 echo '

@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file
+from flask import Flask, request, render_template
 import logging
 
 app = Flask(__name__)
@@ -24,7 +24,7 @@ def home():
     # Log other metadata as needed
     # ...
 
-    return send_file("../templates/index.html")
+    return render_template("index.html", client_ip=client_ip)
 
 
 if __name__ == "__main__":

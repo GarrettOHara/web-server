@@ -242,9 +242,20 @@ resource "aws_s3_bucket_public_access_block" "this" {
 resource "aws_s3_object" "app_source_code" {
   # checkov:skip=CKV_AWS_186: No encryption needed for tests
   bucket = aws_s3_bucket.this.id
-  etag   = md5(file("${path.module}/../src/app.py"))
-  key    = "app.py"
-  source = "${path.module}/../src/app.py"
+  #   etag        = md5(file("${path.module}/../src/app.py"))
+  key         = "app.py"
+  source      = "${path.module}/../src/app.py"
+  source_hash = filemd5("${path.module}/../src/app.py")
+}
+
+resource "aws_s3_object" "app_html_templates" {
+  # checkov:skip=CKV_AWS_186: No encryption needed for tests
+  for_each = toset([for file in fileset("${path.module}/../templates", "**") : file])
+
+  bucket      = aws_s3_bucket.this.id
+  key         = "templates/${each.value}"
+  source      = "${path.module}/../templates/${each.value}"
+  source_hash = filemd5("${path.module}/../templates/${each.value}")
 }
 
 resource "aws_ssm_parameter" "this" {
