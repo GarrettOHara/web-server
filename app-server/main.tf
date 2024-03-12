@@ -135,10 +135,6 @@ resource "aws_iam_instance_profile" "this" {
   }
 }
 
-resource "aws_cloudwatch_log_group" "requests_logs" {
-  name = "${var.name}/requests.log"
-}
-
 resource "aws_security_group" "allow_software_updates" {
   name        = var.name
   description = "Allow software updates"
@@ -257,3 +253,8 @@ resource "aws_s3_object" "app_html_templates" {
   source_hash = filemd5("${path.module}/../templates/${each.value}")
 }
 
+resource "aws_ssm_parameter" "this" {
+  name  = "AmazonCloudWatch-${var.name}-log-config"
+  type  = "String"
+  value = file("${path.module}/cloudwatch-logs-config.json")
+}
