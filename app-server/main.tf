@@ -12,7 +12,8 @@ resource "aws_instance" "this" {
   root_block_device {
     encrypted = true
   }
-  user_data                   = file("user-data.sh")
+  user_data = data.template_file.user_data_template.rendered
+  # user_data                   = file("user-data.sh")
   user_data_replace_on_change = true
   vpc_security_group_ids = [
     aws_security_group.allow_software_updates.id,
@@ -26,6 +27,9 @@ resource "aws_instance" "this" {
   lifecycle {
     create_before_destroy = true
   }
+
+  # Object file is required during user-data initiation
+  depends_on = [aws_s3_bucket.this]
 }
 
 resource "aws_iam_role" "this" {
@@ -47,7 +51,7 @@ resource "aws_iam_role" "this" {
   })
 
   inline_policy {
-    name = "${var.name}-access-rds"
+    name = "${var.name}-s3-access"
 
     policy = jsonencode({
       Version = "2012-10-17"
@@ -56,8 +60,8 @@ resource "aws_iam_role" "this" {
           Action = ["s3:*"]
           Effect = "Allow"
           Resource = [
-            "arn:aws:s3:::${var.name}",
-            "arn:aws:s3:::${var.name}/*"
+            "arn:aws:s3:::${aws_s3_bucket.this.id}",
+            "arn:aws:s3:::${aws_s3_bucket.this.id}/*"
           ]
         }
       ]
@@ -154,11 +158,18 @@ resource "aws_s3_bucket" "this" {
   # checkov:skip=CKV_AWS_144: "Ensure that S3 bucket has cross-region replication enabled"
   # checkov:skip=CKV_AWS_145: "Ensure that S3 buckets are encrypted with KMS by default"
   # checkov:skip=CKV_AWS_186: No encryption needed for tests
-  bucket        = var.name
+  bucket        = "${var.name}-${random_string.random.result}"
   force_destroy = true
   tags = {
-    Name = "${var.name}-bastion"
+    Name = var.name
   }
+}
+
+# Generate random string to allow distinct S3 bucket name
+resource "random_string" "random" {
+  length  = 6
+  upper   = false
+  special = false
 }
 
 resource "aws_s3_bucket_ownership_controls" "this" {

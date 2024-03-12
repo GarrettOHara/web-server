@@ -19,3 +19,10 @@ data "aws_ami" "this" {
   owners = ["amazon"]
 }
 
+data "template_file" "user_data_template" {
+  template = file("${path.module}/user-data.sh")
+
+  vars = {
+    s3_bucket = aws_s3_bucket.this.id
+  }
+}

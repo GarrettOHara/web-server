@@ -14,7 +14,7 @@ def home():
     logging.info(f"Headers: {headers}")
 
     # You could also extract and log specific header fields, for example:
-    user_agent = request.headers.get('User-Agent')
+    user_agent = request.headers.get("User-Agent")
     logging.info(f"User Agent: {user_agent}")
 
     # Log the remote IP address of the client
@@ -24,7 +24,8 @@ def home():
     # Log other metadata as needed
     # ...
 
-    return "Incoming request has been logged."
+    return send_file("templates/index.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
