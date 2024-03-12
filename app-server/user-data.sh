@@ -7,7 +7,7 @@ sudo su
 yum update -y
 
 # Install Python 3, pip, cloudwatch logs agent, collectd for system logs
-yum install -y python3 python3-pip amazon-cloudwatch-agent collectd
+yum install -y python3 python3-pip amazon-cloudwatch-agent
 
 # Install dependencies
 pip3 install flask gunicorn
