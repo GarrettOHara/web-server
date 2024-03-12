@@ -24,7 +24,7 @@ def home():
     # Log other metadata as needed
     # ...
 
-    return send_file("templates/index.html")
+    return send_file("../templates/index.html")
 
 
 if __name__ == "__main__":

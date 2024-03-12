@@ -12,8 +12,7 @@ resource "aws_instance" "this" {
   root_block_device {
     encrypted = true
   }
-  user_data = data.template_file.user_data_template.rendered
-  # user_data                   = file("user-data.sh")
+  user_data                   = data.template_file.user_data_template.rendered
   user_data_replace_on_change = true
   vpc_security_group_ids = [
     aws_security_group.allow_software_updates.id,
@@ -42,7 +41,7 @@ resource "aws_iam_role" "this" {
       {
         Action = "sts:AssumeRole"
         Effect = "Allow"
-        Sid    = "SystemsManagerAccess"
+        Sid    = "Ec2Access"
         Principal = {
           Service = "ec2.amazonaws.com"
         }
@@ -68,6 +67,52 @@ resource "aws_iam_role" "this" {
     })
   }
 
+  inline_policy {
+    name = "${var.name}-ssm-access"
+
+    policy = jsonencode({
+      Version = "2012-10-17"
+      Statement = [
+        {
+          Action = [
+            "ssm:*Parameter",
+            "ssm:*Parameters"
+          ]
+          Effect = "Allow"
+          Resource = [
+            "arn:aws:ssm:*:*:parameter/AmazonCloudWatch-web-server-log-config"
+          ]
+        },
+        {
+          "Effect" : "Allow",
+          "Action" : "ssm:DescribeParameters",
+          "Resource" : "*"
+        }
+      ]
+    })
+  }
+
+  inline_policy {
+    name = "${var.name}-cloudwatch-logs-access"
+
+    policy = jsonencode({
+      Version = "2012-10-17"
+      Statement = [
+        {
+          Action = [
+            "logs:CreateLogGroup",
+            "logs:CreateLogStream",
+            "logs:PutLogEvents",
+            "logs:DescribeLogStreams"
+          ]
+          Effect   = "Allow"
+          Resource = ["*"]
+        }
+      ]
+
+    })
+  }
+
   managed_policy_arns = [
     "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
   ]
@@ -88,6 +133,10 @@ resource "aws_iam_instance_profile" "this" {
   tags = {
     Name = var.name
   }
+}
+
+resource "aws_cloudwatch_log_group" "requests_logs" {
+  name = "${var.name}/requests.log"
 }
 
 resource "aws_security_group" "allow_software_updates" {
@@ -192,7 +241,7 @@ resource "aws_s3_bucket_public_access_block" "this" {
 
 resource "aws_s3_object" "app_source_code" {
   # checkov:skip=CKV_AWS_186: No encryption needed for tests
-  bucket = aws_s3_bucket.this.id
-  key    = "app.py"
-  source = "${path.module}/../app.py"
+  bucket  = aws_s3_bucket.this.id
+  content = filebase64sha256("${path.module}/../src/app.py")
+  key     = "app.py"
 }
