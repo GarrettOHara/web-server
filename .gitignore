@@ -17,3 +17,6 @@ __pycache__/
 # Infracost
 manifest.json
 .infracost
+
+# Ignore server logs
+*.log

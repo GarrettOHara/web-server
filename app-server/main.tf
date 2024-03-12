@@ -241,7 +241,15 @@ resource "aws_s3_bucket_public_access_block" "this" {
 
 resource "aws_s3_object" "app_source_code" {
   # checkov:skip=CKV_AWS_186: No encryption needed for tests
-  bucket  = aws_s3_bucket.this.id
-  content = filebase64sha256("${path.module}/../src/app.py")
-  key     = "app.py"
+  bucket = aws_s3_bucket.this.id
+  etag   = md5(file("${path.module}/../src/app.py"))
+  key    = "app.py"
+  source = "${path.module}/../src/app.py"
 }
+
+resource "aws_ssm_parameter" "this" {
+  name  = "AmazonCloudWatch-${var.name}-log-config"
+  type  = "String"
+  value = file("${path.module}/cloudwatch-logs-config.json")
+}
+
